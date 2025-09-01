@@ -126,7 +126,7 @@ export const SparklesCore: React.FC<SparklesProps> = ({
       ref={canvasRef}
       className={className}
       style={{
-        background,
+        background: background === "transparent" ? "transparent" : background,
         width: "100%",
         height: "100%"
       }}
