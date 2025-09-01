@@ -13,10 +13,12 @@ import {
   TrendingUp,
   MessageSquare,
   Filter,
-  RefreshCw
+  RefreshCw,
+  Trash2
 } from 'lucide-react';
 import { CompaniesService } from '@/services/companies';
 import { EvaluationsService } from '@/services/evaluations';
+import { ClearDataConfirmDialog } from '@/components/ClearDataConfirmDialog';
 import type { Company, Evaluation } from '@/types/database';
 
 interface CompanyNPSData {
@@ -38,6 +40,7 @@ const AdminDashboard: React.FC = () => {
   const [dateFilter, setDateFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [showClearDialog, setShowClearDialog] = useState(false);
 
   // Function to load all data
   const loadDashboardData = useCallback(async () => {
@@ -146,6 +149,21 @@ const AdminDashboard: React.FC = () => {
   };
 
   const { evaluations: filteredEvaluations, companyData: filteredCompanyData } = getFilteredData();
+
+  // Function to handle clearing all evaluations
+  const handleClearAllData = async () => {
+    try {
+      await EvaluationsService.clearAllEvaluations();
+      
+      // Refresh the dashboard data after clearing
+      await loadDashboardData();
+      
+      // Show success message
+      console.log('All evaluations have been successfully cleared!');
+    } catch (error) {
+      console.error('Error clearing all data:', error);
+    }
+  };
 
   // Calculate overall NPS from filtered data
   const calculateOverallNPS = () => {
@@ -319,6 +337,15 @@ const AdminDashboard: React.FC = () => {
               <Button onClick={() => exportData('json')} variant="outline" size="sm">
                 <Download className="w-4 h-4 mr-2" />
                 JSON
+              </Button>
+              <Button 
+                onClick={() => setShowClearDialog(true)} 
+                variant="outline" 
+                size="sm"
+                className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Limpar Tudo
               </Button>
             </div>
           </div>
@@ -807,6 +834,14 @@ const AdminDashboard: React.FC = () => {
         </Card>
         </div>
       </main>
+
+      {/* Clear Data Confirmation Dialog */}
+      <ClearDataConfirmDialog
+        isOpen={showClearDialog}
+        onClose={() => setShowClearDialog(false)}
+        onConfirm={handleClearAllData}
+        totalEvaluations={evaluations.length}
+      />
     </div>
   );
 };

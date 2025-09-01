@@ -233,4 +233,54 @@ export class EvaluationsService {
       throw new Error('Erro ao deletar avaliação');
     }
   }
+
+  /**
+   * ATENÇÃO: DELETA TODAS AS AVALIAÇÕES
+   * Esta função remove permanentemente todos os dados de avaliação
+   * tanto do banco de dados Supabase quanto do localStorage
+   */
+  static async clearAllEvaluations(): Promise<void> {
+    try {
+      // 1. Primeiro tenta limpar do Supabase (se estiver configurado)
+      const { error } = await supabase
+        .from('evaluations')
+        .delete()
+        .neq('id', 'impossible-id-that-will-match-all'); // Deleta todos os registros
+
+      if (error) {
+        console.error('Error clearing evaluations from Supabase:', error);
+        // Mesmo com erro no Supabase, continua para limpar localStorage
+      }
+
+      // 2. Limpa do localStorage (fallback local)
+      localStorage.removeItem('scorehub_evaluations');
+      
+      // 3. Limpa outros dados relacionados que possam existir no localStorage
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('scorehub_evaluation_')) {
+          keysToRemove.push(key);
+        }
+      }
+      
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+
+      console.log('All evaluations have been successfully cleared from both database and localStorage');
+      
+    } catch (error) {
+      console.error('Critical error while clearing evaluations:', error);
+      
+      // Mesmo em caso de erro crítico, tenta limpar pelo menos o localStorage
+      try {
+        localStorage.removeItem('scorehub_evaluations');
+        console.log('LocalStorage fallback clearing completed');
+      } catch (fallbackError) {
+        console.error('Even localStorage clearing failed:', fallbackError);
+        throw new Error('Falha crítica ao limpar dados. Contate o administrador do sistema.');
+      }
+      
+      throw new Error('Erro ao limpar todas as avaliações do banco de dados');
+    }
+  }
 }
