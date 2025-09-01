@@ -5,7 +5,9 @@
       "Bash(npm install:*)",
       "WebFetch(domain:thinkworklab.com)",
       "WebFetch(domain:mundodosindicadores.wordpress.com)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

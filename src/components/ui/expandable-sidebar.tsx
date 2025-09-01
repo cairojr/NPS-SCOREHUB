@@ -57,7 +57,7 @@ const ExpandableSidebar: React.FC = () => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(true)}
-        className="fixed top-4 left-4 z-50 md:hidden bg-sidebar border border-sidebar-border rounded-lg p-2 shadow-lg"
+        className="fixed top-4 right-4 z-50 md:hidden bg-sidebar border border-sidebar-border rounded-lg p-2 shadow-lg"
       >
         <Menu className="w-5 h-5 text-sidebar-foreground" />
       </button>

@@ -5,7 +5,6 @@ import {
   Building2, 
   Star, 
   BarChart3, 
-  LogOut, 
   User,
   Settings,
   TrendingUp,
@@ -64,14 +63,6 @@ const Dashboard: React.FC = () => {
     loadStats();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      navigate('/login');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
 
   const menuItems = [
     {
@@ -110,17 +101,6 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <LogOut className="w-4 h-4" />
-                Sair
-              </Button>
-            </div>
           </div>
         </div>
 
